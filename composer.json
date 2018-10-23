@@ -8,6 +8,7 @@
     "model",
     "Eloquent"
   ],
+  "license": "MIT",
   "authors": [
     {
       "name": "Paul Warren",
