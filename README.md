@@ -1,6 +1,6 @@
 # Model Mapper
 
-
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=for-the-badge)](LICENSE.md)
 
 ## Introduction
 
