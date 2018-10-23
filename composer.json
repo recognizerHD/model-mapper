@@ -1,0 +1,32 @@
+{
+  "name": "minionfactory/model-mapper",
+  "description": "Laravel extension. Wrapper for models and raw DB::select results to map one or more attributes to other models.",
+  "type": "package",
+  "keywords": [
+    "laravel",
+    "mapper",
+    "model",
+    "Eloquent"
+  ],
+  "authors": [
+    {
+      "name": "Paul Warren",
+      "email": "paul@paulwarren.ca",
+      "role": "Developer",
+      "homepage": "https://paulwarren.ca"
+    }
+  ],
+  "require": {
+    "php": ">=7.0"
+  },
+  "require-dev": {
+    "laravel/framework": "~5.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "MinionFactory\\ModelMapper\\": "src/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
