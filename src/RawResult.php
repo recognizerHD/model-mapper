@@ -1,6 +1,6 @@
 <?php
 
-namespace Tomahawk\ModelMapper;
+namespace MinionFactory\ModelMapper;
 
 use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;

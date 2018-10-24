@@ -1,14 +1,12 @@
 <?php
 
-namespace Tomahawk\ModelMapper;
+namespace MinionFactory\ModelMapper;
 
-use Tomahawk\ModelMapper\Contacts\ModelAttributeMapping;
+use MinionFactory\ModelMapper\Contacts\ModelAttributeMapping;
 
 /**
  * Class AdvancedResult
- * @package Tomahawk\ModelMapper;
- *
- * For usage see https://wiki.ops-com.com/x/S4QCAw
+ * @package MinionFactory\ModelMapper;
  */
 class AdvancedResult extends RawResult
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tomahawk\ModelMapper;
+namespace MinionFactory\ModelMapper;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;

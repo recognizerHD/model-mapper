@@ -1,6 +1,6 @@
 <?php
 
-namespace Tomahawk\ModelMapper\Contacts;
+namespace MinionFactory\ModelMapper\Contacts;
 
 trait ModelAttributeMapping
 {
