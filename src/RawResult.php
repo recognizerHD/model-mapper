@@ -4,12 +4,15 @@ namespace MinionFactory\ModelMapper;
 
 use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Concerns\HasAttributes;
 use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Concerns\HidesAttributes;
+use Illuminate\Database\Eloquent\JsonEncodingException;
+use JsonSerializable;
 
-class RawResult implements ArrayAccess, Arrayable
+class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
     use HasAttributes,
         HasRelationships,
@@ -142,6 +145,46 @@ class RawResult implements ArrayAccess, Arrayable
     public function offsetUnset($offset)
     {
         unset($this->attributes[$offset], $this->relations[$offset]);
+    }
+
+    /**
+     * Convert the model to its string representation.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->toJson();
+    }
+
+    /**
+     * Convert the model instance to JSON.
+     *
+     * @param  int $options
+     *
+     * @return string
+     *
+     * @throws \Illuminate\Database\Eloquent\JsonEncodingException
+     */
+    public function toJson($options = 0)
+    {
+        $json = json_encode($this->jsonSerialize(), $options);
+
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw JsonEncodingException::forModel($this, json_last_error_msg());
+        }
+
+        return $json;
+    }
+
+    /**
+     * Convert the object into something JSON serializable.
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
     }
 
     /**
