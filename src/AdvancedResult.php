@@ -32,7 +32,7 @@ class AdvancedResult extends RawResult
         }
 
         if ( ! $records || ! is_array($records) || ! count($records)) {
-            return collect(null);
+            $records = [];
         }
 
         foreach ($records as $ix => $record) {
