@@ -7,6 +7,7 @@ trait ModelAttributeMapping
     protected $modelAttributeMapping = [];
     protected $foreignModels = [];
     protected $modelIndex = [];
+    protected $parentObject = null;
 
     /**
      * @param array $array
@@ -36,25 +37,28 @@ trait ModelAttributeMapping
             if ( ! isset($this->foreignModels[$model])) {
                 try {
                     $this->foreignModels[$model] = new $model;
+                    if (method_exists($this->foreignModels[$model], 'setParentObject')) {
+                        $this->foreignModels[$model]->setParentObject($this);
+                    }
                 } catch (\Exception $e) {
                     // Model doesn't exist. lets return parent.
-                    return parent::getAttribute($key);
+                    return $this->getParentValue($key);
                 }
 
                 foreach ($this->modelIndex[$model] as $field) {
-                    $this->foreignModels[$model]->$field = parent::getAttribute($field);
+                    $this->foreignModels[$model]->$field = $this->getParentValue($field);
                 }
             }
 
             // We found that the local attribute is different from the foreign model version. Update the local to match.
             if (parent::getAttribute($key) !== $this->foreignModels[$model]->$key) {
-                $this->setAttribute($key,$this->foreignModels[$model]->$key);
+                $this->setAttribute($key, $this->foreignModels[$model]->$key);
             }
 
             return $this->foreignModels[$model]->$key;
         }
 
-        return parent::getAttribute($key);
+        return $this->getParentValue($key);
     }
 
     /**
@@ -74,20 +78,37 @@ trait ModelAttributeMapping
                     $this->foreignModels[$model] = new $model;
                 } catch (\Exception $e) {
                     // Model doesn't exist. lets return parent.
-                    return parent::setAttribute($key,$value);
+                    return parent::setAttribute($key, $value);
                 }
 
                 foreach ($this->modelIndex[$model] as $field) {
-                    if ($field == $key) continue; // We are setting this in a few lines.
+                    if ($field == $key) {
+                        continue;
+                    } // We are setting this in a few lines.
                     $this->foreignModels[$model]->$field = parent::getAttribute($field);
                 }
             }
 
             $this->foreignModels[$model]->$key = $value;
+
             // Because the mutator on the model may have altered the value, lets change the local attribute to match.
-            return parent::setAttribute($key,$this->foreignModels[$model]->$key);
+            return parent::setAttribute($key, $this->foreignModels[$model]->$key);
         }
 
-        return parent::setAttribute($key,$value);
+        return parent::setAttribute($key, $value);
+    }
+
+    private function getParentValue($key)
+    {
+        if (isset($this->parentObject) && $this->parentObject && ! key_exists($key, $this->attributes)) {
+            return $this->parentObject->$key;
+        }
+
+        return parent::getAttribute($key);
+    }
+
+    public function setParentObject(&$parent)
+    {
+        $this->parentObject = $parent;
     }
 }
