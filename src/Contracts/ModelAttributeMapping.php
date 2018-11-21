@@ -51,11 +51,13 @@ trait ModelAttributeMapping
             }
 
             // We found that the local attribute is different from the foreign model version. Update the local to match.
-            if (parent::getAttribute($key) !== $this->foreignModels[$model]->$key) {
-                $this->setAttribute($key, $this->foreignModels[$model]->$key);
+            if ($this->foreignModels[$model]->$key ?? null !== null) {
+                if (parent::getAttribute($key) !== $this->foreignModels[$model]->$key) {
+                    $this->setAttribute($key, $this->foreignModels[$model]->$key);
+                }
             }
 
-            return $this->foreignModels[$model]->$key;
+            return $this->foreignModels[$model]->$key ?? null;
         }
 
         return $this->getParentValue($key);
