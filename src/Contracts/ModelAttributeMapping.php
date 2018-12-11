@@ -37,6 +37,10 @@ trait ModelAttributeMapping
             if ( ! isset($this->foreignModels[$model])) {
                 try {
                     $this->foreignModels[$model] = new $model;
+                    if (!$this->connectionObject) {
+                        $connection = $this->foreignModels[$model]->getConnection();
+                        $this->setConnectionObject($connection);
+                    }
                     if (method_exists($this->foreignModels[$model], 'setParentObject')) {
                         $this->foreignModels[$model]->setParentObject($this);
                     }
