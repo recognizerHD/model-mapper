@@ -13,6 +13,36 @@ class AdvancedResult extends RawResult
     use ModelAttributeMapping;
 
     /**
+     * The connection object used by one of the models.
+     *
+     * @var \Illuminate\Database\Connection
+     */
+    protected $connectionObject;
+
+    /**
+     * Set the connection associated with the model.
+     *
+     * @param  \Illuminate\Database\Connection $connection
+     * @return $this
+     */
+    public function setConnectionObject($connection)
+    {
+        $this->connectionObject = $connection;
+
+        return $this;
+    }
+
+    /**
+     * Get the database connection for the model.
+     *
+     * @return \Illuminate\Database\Connection
+     */
+    public function getConnection()
+    {
+        return $this->connectionObject;
+    }
+
+    /**
      * @param $records
      * @param array $mapping
      * @param bool $single
