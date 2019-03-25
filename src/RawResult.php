@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Concerns\HidesAttributes;
 use Illuminate\Database\Eloquent\JsonEncodingException;
+use Illuminate\Support\Facades\DB;
 use JsonSerializable;
 
 class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
@@ -37,6 +38,23 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      * @var bool
      */
     public $incrementing = false;
+    /**
+     * The connection name for the model.
+     *
+     * @var string
+     */
+    protected $connection;
+
+    /**
+     * Get the default database connection for the site. We are likely not connecting to different types database servers.
+     * Code for that when we actually do.
+     *
+     * @return \Illuminate\Database\ConnectionInterface
+     */
+    public function getConnection()
+    {
+        return DB::connection();
+    }
 
     /**
      * Get the value indicating whether the IDs are incrementing.
