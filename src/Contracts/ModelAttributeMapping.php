@@ -26,7 +26,7 @@ trait ModelAttributeMapping
     /**
      * Dynamically retrieve attributes on the model.
      *
-     * @param  string $key
+     * @param string $key
      *
      * @return mixed
      */
@@ -37,7 +37,7 @@ trait ModelAttributeMapping
             if ( ! isset($this->foreignModels[$model])) {
                 try {
                     $this->foreignModels[$model] = new $model;
-                    if (!$this->connectionObject) {
+                    if ( ! $this->connectionObject) {
                         $connection = $this->foreignModels[$model]->getConnection();
                         $this->setConnectionObject($connection);
                     }
@@ -50,14 +50,22 @@ trait ModelAttributeMapping
                 }
 
                 foreach ($this->modelIndex[$model] as $field) {
-                    $this->foreignModels[$model]->$field = $this->getParentValue($field);
+                    if (method_exists($this->foreignModels[$model], 'setRawAttribute')) {
+                        $this->foreignModels[$model]->setRawAttribute($field, $this->getParentValue($field));
+                    } else {
+                        $this->foreignModels[$model]->$field = $this->getParentValue($field);
+                    }
                 }
             }
 
             // We found that the local attribute is different from the foreign model version. Update the local to match.
             if ($this->foreignModels[$model]->$key ?? null !== null) {
                 if (parent::getAttribute($key) !== $this->foreignModels[$model]->$key) {
-                    $this->setAttribute($key, $this->foreignModels[$model]->$key);
+                    if (method_exists($this->foreignModels[$model], 'setRawAttribute')) {
+                        $this->setRawAttribute($key, $this->foreignModels[$model]->$key);
+                    } else {
+                        $this->setAttribute($key, $this->foreignModels[$model]->$key);
+                    }
                 }
             }
 
@@ -70,8 +78,8 @@ trait ModelAttributeMapping
     /**
      * Dynamically set attributes on the model.
      *
-     * @param  string $key
-     * @param  string $value
+     * @param string $key
+     * @param string $value
      *
      * @return mixed
      */
@@ -91,14 +99,22 @@ trait ModelAttributeMapping
                     if ($field == $key) {
                         continue;
                     } // We are setting this in a few lines.
-                    $this->foreignModels[$model]->$field = parent::getAttribute($field);
+                    if (method_exists($this->foreignModels[$model], 'setRawAttribute')) {
+                        $this->foreignModels[$model]->setRawAttribute($field, parent::getAttribute($field));
+                    } else {
+                        $this->foreignModels[$model]->$field = parent::getAttribute($field);
+                    }
                 }
             }
 
             $this->foreignModels[$model]->$key = $value;
 
             // Because the mutator on the model may have altered the value, lets change the local attribute to match.
-            return parent::setAttribute($key, $this->foreignModels[$model]->$key);
+            if (method_exists($this->foreignModels[$model], 'setRawAttribute')) {
+                return parent::setRawAttribute($key, $this->foreignModels[$model]->$key);
+            } else {
+                return parent::setAttribute($key, $this->foreignModels[$model]->$key);
+            }
         }
 
         return parent::setAttribute($key, $value);
@@ -111,6 +127,11 @@ trait ModelAttributeMapping
         }
 
         return parent::getAttribute($key);
+    }
+
+    public function setRawAttribute($key, $value)
+    {
+        $this->attributes[$key] = $value;
     }
 
     public function setParentObject(&$parent)
