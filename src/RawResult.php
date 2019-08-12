@@ -90,8 +90,8 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      */
     public function __call($method, $parameters)
     {
-        if (is_callable($this->$method)) {
-            return call_user_func_array($this->{$method}->bindTo($this), $parameters);
+        if (method_exists($this, $method)) {
+            return $this->$method(...$parameters);
         }
     }
 
