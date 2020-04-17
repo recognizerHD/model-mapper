@@ -14,13 +14,36 @@ trait ModelAttributeMapping
      */
     public function modelMapper($array)
     {
-        $this->modelAttributeMapping = $array;
+        $actualMapping = [];
         foreach ($array as $field => $class) {
-            if ( ! isset($this->modelIndex[$class])) {
-                $this->modelIndex[$class] = [];
+            switch (strtolower($class)) {
+                case "integer":
+                case "int":
+                    $this->setRawAttribute($field, intval($this->getAttributeValue($field)));
+                    break;
+                case "boolean":
+                case "bool":
+                    $this->setRawAttribute($field, boolval($this->getAttributeValue($field)));
+                    break;
+                case "float":
+                    $this->setRawAttribute($field, floatval($this->getAttributeValue($field)));
+                    break;
+                case "double":
+                    $this->setRawAttribute($field, doubleval($this->getAttributeValue($field)));
+                    break;
+                case "string":
+                case "text":
+                    $this->setRawAttribute($field, strval($this->getAttributeValue($field)));
+                    break;
+                default:
+                    if ( ! isset($this->modelIndex[$class])) {
+                        $this->modelIndex[$class] = [];
+                    }
+                    $this->modelIndex[$class][] = $field;
+                    $actualMapping[$field] = $class;
             }
-            $this->modelIndex[$class][] = $field;
         }
+        $this->modelAttributeMapping = $actualMapping;
     }
 
     /**
