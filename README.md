@@ -16,11 +16,11 @@ Finally, as I do most of my work with sqlsrv (Microsoft SQL Server), it has issu
 
 This package is meant for my own usage, but is free for others who find it useful.
 
-#### Dates and SQLSRV (Microsoft SQL Server)
-When the attribute is listed as a date attribute, it will use the internal fromDateTime method. This causes a 
-problem when the field is coming from sqlsrv. This overriding method strips the trailing milliseconds from the 
+#### ~~Dates and SQLSRV (Microsoft SQL Server)~~
+~~When the attribute is listed as a date attribute, it will use the internal fromDateTime method. This causes a
+problem when the field is coming from sqlsrv. This overriding method strips the trailing milliseconds from the
 date field so it doesn't cause errors. This will need review on subsequent updates of the laravel core incase 
-they fixed this issue. 
+they fixed this issue.~~
 
 #### Model Mapping: AdvancedModel
 Using the model for simple updates / inserts etc is great. When the queries involve multiple joins with multiple 
@@ -31,20 +31,30 @@ The first is the AdvancedModel. This overrides the default __get method as well 
 Usage:
 
 ```php
-$reminderText = WebEventsCommonData::join('WebEvents', 'WebEventsCommonData.webEventsCommonDataID', '=', 'WebEvents.WebEventsCommonID')
-                                ->whereIn('WebEventsId', $ids)
-                                ->select('WebEventsCommonData.reminderemailText', 'WebEvents.EventDate')
-                                ->get();
+$reminderText = CommonData::join('Events', 'CommonData.CommonDataID', '=', 'Events.EventsCommonID')
+                          ->whereIn('EventsId', $ids)
+                          ->select('CommonData.reminderemailText', 'Events.EventDate', 'Events.PriceCount')
+                          ->get();
 
 $reminderText->map(function($reminder) {
-    $reminder->modelMapper(['EventDate' => WebEvents::class]);
+    $reminder->modelMapper([
+        'EventDate'         => Events::class,
+        'PriceCount'        => 'integer'
+    ]);
 });
 ```
-When referincing $reminderText[ $index ]→EventDate, it will now use the WebEvents class to determine how to deal 
-with the attribute instead of going to WebEventsCommonData. 
+When referencing $reminderText[ $index ]→EventDate, it will now use the Events class to determine how to deal 
+with the attribute instead of going to CommonData. 
  
 For each field that's being returned that is part of another model, simply add it as a key→value pair in the 
 modelMapper mapping call.
+
+If the attribute requires no extra altering apart from casting it to the type that it needs to be, you can use the following simple values instead of the model class:
+* integer, int
+* boolean, bool
+* float
+* double
+* string, text
  
 #### Model Mapping: AdvancedResult
  
@@ -53,15 +63,22 @@ the attributes can be mapped to a model. If the third parameter is supplied as t
 This is the object and not a collection.
 
 ```php
-$asdf = DB::select("SELECT TOP 3 * FROM WebEvents");
+$asdf = DB::select("SELECT TOP 3 * FROM Events INNER JOIN CommonData ON ...");
 
 // The first argument is passed by reference so there's no need to set the variable to be returned.
 // The second argument is optional, if you want to set it later.
-AdvancedResult::make($asdf, ['EventDate' => WebEvents::class]);
+AdvancedResult::make($asdf, [
+    'EventDate'         => Events::class,
+    'reminderemailText' => CommonData::class,
+    'PriceCount'        => 'integer'
+]);
 
 // This is how you would call the argument later.
 $asdf->map(function($record){
-    $record->modelMapper(['EventDate' => WebEvents::class]);
+    $record->modelMapper([
+        'EventDate'  => Events::class,
+        'PriceCount' => 'integer'
+    ]);
     return $record;
 });
 ```
