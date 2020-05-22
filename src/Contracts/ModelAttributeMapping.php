@@ -1,6 +1,6 @@
 <?php
 
-namespace MinionFactory\ModelMapper\Contacts;
+namespace MinionFactory\ModelMapper\Contracts;
 
 trait ModelAttributeMapping
 {
