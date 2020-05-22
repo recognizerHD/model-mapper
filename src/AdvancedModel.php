@@ -3,7 +3,7 @@
 namespace MinionFactory\ModelMapper;
 
 use Illuminate\Database\Eloquent\Model;
-use MinionFactory\ModelMapper\Contacts\ModelAttributeMapping;
+use MinionFactory\ModelMapper\Contracts\ModelAttributeMapping;
 
 /**
  * Class AdvancedModel
