@@ -2,7 +2,7 @@
 
 namespace MinionFactory\ModelMapper;
 
-use MinionFactory\ModelMapper\Contacts\ModelAttributeMapping;
+use MinionFactory\ModelMapper\Contracts\ModelAttributeMapping;
 
 /**
  * Class AdvancedResult
