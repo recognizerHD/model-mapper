@@ -1,7 +1,22 @@
 # Changelog
 
 All notable changes will be documented in this file.
-## 2018-10-22: v.1.2.0
+## 2020-06-25: v.1.2.3
+#### Changed
+- isset doesn't return parent attribute.\
+  In the case of a attribute request like:\
+  $this->attribute ?? [ ];\
+  It would return a null even if a parent object contains that attribute. The fix would do one last check on the parent before returning null.
+
+## 2020-05-21: v.1.2.2
+#### Changed
+- PSR-4 Typo
+
+## 2020-05-19: v.1.2.1
+#### Changed
+- Vendor Update
+
+## 2020-04-17: v.1.2.0
 #### Added
 - Allow for basic type casting instead of using the model's get*Attribute method. If you want it to be an integer but don't care about the rest of the attribute methods, you can use "integer". Check the readme for more types.
 
