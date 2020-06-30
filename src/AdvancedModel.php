@@ -19,6 +19,8 @@ class AdvancedModel extends Model
         self::CREATED_AT
     ];
 
+    protected $utcAsLocal = true;
+
     /**
      * @param array $fillable
      */
