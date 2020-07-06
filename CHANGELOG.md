@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes will be documented in this file.
+## 2020-07-06: v1.3.1
+#### Changed
+- Fixed issue with in_array error
+
 ## 2020-06-30: v1.3.0
 #### Added
 - UTC Dates are now supported.\
