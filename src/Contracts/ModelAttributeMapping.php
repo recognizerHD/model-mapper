@@ -209,7 +209,7 @@ trait ModelAttributeMapping
      */
     public function getUtcDates()
     {
-        return $this->utcDates;
+        return $this->utcDates ?? [];
     }
 
     /**
