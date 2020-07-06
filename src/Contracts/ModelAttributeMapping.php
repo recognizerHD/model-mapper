@@ -339,7 +339,7 @@ trait ModelAttributeMapping
         ];
 
         return $this->usesTimestamps()
-            ? array_unique(array_merge($this->dates, $this->utcDates, $defaults))
-            : array_unique(array_merge($this->dates, $this->utcDates));
+            ? array_unique(array_merge($this->dates, $this->utcDates ?? [], $defaults))
+            : array_unique(array_merge($this->dates, $this->utcDates ?? []));
     }
 }

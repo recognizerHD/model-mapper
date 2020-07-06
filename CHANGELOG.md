@@ -1,6 +1,9 @@
 # Changelog
 
 All notable changes will be documented in this file.
+## 2020-07-06: v1.3.2
+- Found another bug with array_merge
+
 ## 2020-07-06: v1.3.1
 #### Changed
 - Fixed issue with in_array error
