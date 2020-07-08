@@ -272,10 +272,10 @@ trait ModelAttributeMapping
         // the database connection and use that format to create the Carbon object
         // that is returned back out to the developers after we convert it here.
         if (Date::hasFormat($value, $format)) {
-            return Date::createFromFormat($format, $value, new \DateTimeZone('UTC'))->setTimezone(date_default_timezone_get())->setTimezone($returnTimezone);
+            return Date::createFromFormat($format, $value, new \DateTimeZone('UTC'))->setTimezone($returnTimezone);
         }
 
-        return Date::parse($value);
+        return Date::parse($value, new \DateTimeZone('UTC'))->setTimezone($returnTimezone);
     }
 
     public function setParentObject(&$parent)
