@@ -1,7 +1,13 @@
 # Changelog
 
 All notable changes will be documented in this file.
+## 2020-07-08: v1.3.3
+#### Changed
+- Fixed bug with timezone when format not defined.
+- Removed redundant timezone set.
+
 ## 2020-07-06: v1.3.2
+#### Changed
 - Found another bug with array_merge
 
 ## 2020-07-06: v1.3.1
