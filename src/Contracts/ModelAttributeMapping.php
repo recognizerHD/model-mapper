@@ -84,7 +84,7 @@ trait ModelAttributeMapping
 
                 foreach ($this->modelIndex[$model] as $field) {
                     if (method_exists($this->foreignModels[$model], 'setRawAttribute')) {
-                        $this->foreignModels[$model]->setRawAttribute($field, $this->getParentValue($field));
+                        $this->foreignModels[$model]->setRawAttribute($field, $this->getAttributeFromArray($field));
                     } else {
                         $this->foreignModels[$model]->$field = $this->getParentValue($field);
                     }
@@ -133,7 +133,7 @@ trait ModelAttributeMapping
                         continue;
                     } // We are setting this in a few lines.
                     if (method_exists($this->foreignModels[$model], 'setRawAttribute')) {
-                        $this->foreignModels[$model]->setRawAttribute($field, parent::getAttribute($field));
+                        $this->foreignModels[$model]->setRawAttribute($field, parent::getAttributeFromArray($field));
                     } else {
                         $this->foreignModels[$model]->$field = parent::getAttribute($field);
                     }
