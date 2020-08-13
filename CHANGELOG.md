@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes will be documented in this file.
+## 2020-08-13: v1.3.4
+#### Changed
+- Fixed an issue with raw attributes being set with transformed values.
+
 ## 2020-07-08: v1.3.3
 #### Changed
 - Fixed bug with timezone when format not defined.
