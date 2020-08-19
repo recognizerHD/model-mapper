@@ -1,5 +1,9 @@
 # Changelog
 
+## 2020-08-17: v1.3.5
+#### Changed
+- Setting the connection object on anything but AdvancedResult throws an error.
+
 All notable changes will be documented in this file.
 ## 2020-08-13: v1.3.4
 #### Changed
