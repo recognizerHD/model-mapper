@@ -234,9 +234,9 @@ trait ModelAttributeMapping
      *
      * @return \Illuminate\Support\Carbon
      */
-    protected function asUtcDateTime($value)
+    protected function asUtcDateTime($value, $returnTimezone = 'UTC')
     {
-        $returnTimezone = ($this->utcAsLocal ?? true) ? date_default_timezone_get() : 'UTC';
+//        $returnTimezone = ($this->utcAsLocal ?? true) ? date_default_timezone_get() : 'UTC';
         // If this value is already a Carbon instance, we shall just return it as is.
         // This prevents us having to re-instantiate a Carbon instance when we know
         // it already is one, which wouldn't be fulfilled by the DateTime check.
@@ -313,7 +313,7 @@ trait ModelAttributeMapping
         // date fields without having to create a mutator for each property.
         if ($value !== null
             && \in_array($key, $this->getUtcDates(), false)) {
-            return $this->asUtcDateTime($value);
+            return $this->asUtcDateTime($value, ($this->utcAsLocal ?? true) ? date_default_timezone_get() : 'UTC');
         }
 
         // If the attribute is listed as a date, we will convert it to a DateTime
