@@ -1,5 +1,9 @@
 # Changelog
 
+## 2021-01-19: v1.3.8
+#### Changed
+- Updated vendor files
+
 ## 2020-10-16: v1.3.7
 #### Changed
 - UTC Dates were being set as local time when utcAsLocal = true. It should only convert set the timezone to local when using getAttribute, not setAttribute.
