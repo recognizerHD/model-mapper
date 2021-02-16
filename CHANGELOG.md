@@ -1,5 +1,9 @@
 # Changelog
 
+## 2021-02-16: v1.4.1
+#### Changed
+- Placed requirement in a different location
+
 ## 2021-01-19: v1.4.0
 #### Changed
 - Updated vendor files
