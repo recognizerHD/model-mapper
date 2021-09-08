@@ -199,8 +199,8 @@ trait ModelAttributeMapping
      */
     protected function isUtcDateAttribute($key)
     {
-        return in_array($key, $this->getUtcDates(), true) ||
-               $this->isDateCastable($key);
+        return in_array($key, $this->getUtcDates(), true);
+//        ||               $this->isDateCastable($key); // This broke some utc dates
     }
 
     /**
@@ -301,19 +301,20 @@ trait ModelAttributeMapping
             return $this->mutateAttribute($key, $value);
         }
 
-        // If the attribute exists within the cast array, we will convert it to
-        // an appropriate native PHP type dependent upon the associated value
-        // given with the key in the pair. Dayle made this comment line up.
-        if ($this->hasCast($key)) {
-            return $this->castAttribute($key, $value);
-        }
-
         // If the attribute is listed as a date, we will convert it to a DateTime
         // instance on retrieval, which makes it quite convenient to work with
         // date fields without having to create a mutator for each property.
         if ($value !== null
             && \in_array($key, $this->getUtcDates(), false)) {
             return $this->asUtcDateTime($value, ($this->utcAsLocal ?? true) ? date_default_timezone_get() : 'UTC');
+        }
+        // Casting caused issues with utc dates.
+
+        // If the attribute exists within the cast array, we will convert it to
+        // an appropriate native PHP type dependent upon the associated value
+        // given with the key in the pair. Dayle made this comment line up.
+        if ($this->hasCast($key)) {
+            return $this->castAttribute($key, $value);
         }
 
         // If the attribute is listed as a date, we will convert it to a DateTime
