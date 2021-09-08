@@ -1,5 +1,12 @@
 # Changelog
 
+## 2021-09-08: v1.4.3
+#### Changed
+- Updated vendor files
+- Casts on attributes caused problems when the field was a datetime.
+The issue is specifically related to UTC support. A temporary solution to prefer the logic on date detection over casts.
+A better solution may be revisited.
+
 ## 2021-07-04: v1.4.2
 #### Changed
 - Updated vendor files
