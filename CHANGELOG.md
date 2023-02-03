@@ -1,5 +1,10 @@
 # Changelog
 
+## 2023-02-03: v1.4.4
+#### Changed
+- Updated vendor files
+- Updated Laravel version
+
 ## 2021-09-08: v1.4.3
 #### Changed
 - Updated vendor files

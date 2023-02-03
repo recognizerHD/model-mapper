@@ -12,7 +12,7 @@
   "authors": [
     {
       "name": "Paul Warren",
-      "email": "paul@paulwarren.ca",
+      "email": "paulwarren.php@gmail.com",
       "role": "Developer",
       "homepage": "https://paulwarren.ca"
     }
@@ -20,7 +20,7 @@
   "require": {
     "php": ">=7.4",
     "ext-json": "*",
-    "laravel/framework": "^8.0"
+    "laravel/framework": "^8.0|^9.0|^10.0"
   },
   "autoload": {
     "psr-4": {
