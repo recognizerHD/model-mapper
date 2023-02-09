@@ -46,6 +46,20 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     protected $connection;
 
     /**
+     * Indicates if the model exists.
+     *
+     * @var bool
+     */
+    public $exists = false;
+
+    /**
+     * Indicates if the model was inserted during the current request lifecycle.
+     *
+     * @var bool
+     */
+    public $wasRecentlyCreated = false;
+
+    /**
      * Get the default database connection for the site. We are likely not connecting to different types database servers.
      * Code for that when we actually do.
      *

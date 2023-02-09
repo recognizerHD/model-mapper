@@ -1,5 +1,9 @@
 # Changelog
 
+## 2023-02-09: v1.4.5
+#### Changed
+- Bug: exists and wasRecentyCreated attributes were not defined.
+
 ## 2023-02-03: v1.4.4
 #### Changed
 - Updated vendor files
