@@ -15,10 +15,12 @@ use JsonSerializable;
 
 class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
-    use HasAttributes,
-        HasRelationships,
+    use HasRelationships,
         HasTimestamps,
-        HidesAttributes;
+        HidesAttributes,
+        HasAttributes {
+        HasAttributes::addDateAttributesToArray as parentAddDateAttributesToArray;
+    }
 
     /**
      * The name of the "created at" column.
@@ -83,7 +85,7 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     /**
      * Set whether IDs are incrementing.
      *
-     * @param  bool $value
+     * @param  bool  $value
      *
      * @return $this
      */
@@ -97,8 +99,8 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     /**
      * Handle dynamic method calls into the model.
      *
-     * @param  string $method
-     * @param  array $parameters
+     * @param  string  $method
+     * @param  array  $parameters
      *
      * @return mixed
      */
@@ -113,7 +115,7 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      * Whether a offset exists
      * @link http://php.net/manual/en/arrayaccess.offsetexists.php
      *
-     * @param mixed $offset <p>
+     * @param  mixed  $offset  <p>
      * An offset to check for.
      * </p>
      *
@@ -132,7 +134,7 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      * Offset to retrieve
      * @link http://php.net/manual/en/arrayaccess.offsetget.php
      *
-     * @param mixed $offset <p>
+     * @param  mixed  $offset  <p>
      * The offset to retrieve.
      * </p>
      *
@@ -148,10 +150,10 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      * Offset to set
      * @link http://php.net/manual/en/arrayaccess.offsetset.php
      *
-     * @param mixed $offset <p>
+     * @param  mixed  $offset  <p>
      * The offset to assign the value to.
      * </p>
-     * @param mixed $value <p>
+     * @param  mixed  $value  <p>
      * The value to set.
      * </p>
      *
@@ -167,7 +169,7 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      * Offset to unset
      * @link http://php.net/manual/en/arrayaccess.offsetunset.php
      *
-     * @param mixed $offset <p>
+     * @param  mixed  $offset  <p>
      * The offset to unset.
      * </p>
      *
@@ -192,11 +194,11 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     /**
      * Convert the model instance to JSON.
      *
-     * @param  int $options
+     * @param  int  $options
      *
      * @return string
      *
-     * @throws \Illuminate\Database\Eloquent\JsonEncodingException
+     * @throws JsonEncodingException
      */
     public function toJson($options = 0)
     {
@@ -227,5 +229,31 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     public function toArray()
     {
         return array_merge($this->attributesToArray(), $this->relationsToArray());
+    }
+
+    /**
+     * Add the date attributes to the attributes array.
+     *
+     * @param  array  $attributes
+     *
+     * @return array
+     */
+    protected function addDateAttributesToArray(array $attributes)
+    {
+        if ( ! $this->getConnection()) {
+            foreach ($this->getDates() as $key) {
+                if ( ! isset($attributes[$key])) {
+                    continue;
+                }
+
+                try {
+                    $this->{$key}; // Just touch the attribute so it loads the foreignModel if needed.
+                } catch (\Exception $exception) {
+                };
+                break;
+            }
+        }
+
+        return $this->parentAddDateAttributesToArray($attributes);
     }
 }
