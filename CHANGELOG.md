@@ -1,8 +1,12 @@
 # Changelog
 
+## 2023-03-24: v1.4.7
+#### Changed
+- Updated PHP Version
+
 ## 2023-03-24: v1.4.6
 #### Changed
-- Bug: dates require knowledge of the connection. When returning the object as json, check if the foreignModel is loaded yet that will help determine the connection and therefore the dateformat. 
+- Bug: dates require knowledge of the connection. When returning the object as json, check if the foreignModel is loaded yet that will help determine the connection and therefore the dateformat.
 
 ## 2023-02-09: v1.4.5
 #### Changed
