@@ -329,6 +329,35 @@ trait ModelAttributeMapping
     }
 
     /**
+     * Add the date attributes to the attributes array.
+     *
+     * @param  array  $attributes
+     * @return array
+     */
+    protected function addDateAttributesToArray(array $attributes)
+    {
+        foreach ($this->getDates() as $key) {
+            if (! isset($attributes[$key])) {
+                continue;
+            }
+
+            if ($attributes[$key] !== null
+                && \in_array($key, $this->getUtcDates(), false)) {
+                $attributes[$key] = $this->serializeDate(
+                    $this->asUtcDateTime($attributes[$key], ($this->utcAsLocal ?? true) ? date_default_timezone_get() : 'UTC')
+                );
+            } else {
+                $attributes[$key] = $this->serializeDate(
+                    $this->asDateTime($attributes[$key])
+                );
+            }
+
+        }
+
+        return $attributes;
+    }
+
+    /**
      * Get the attributes that should be converted to dates.
      *
      * @return array
