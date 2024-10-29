@@ -41,6 +41,18 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      */
     public $incrementing = false;
     /**
+     * Indicates if the model exists.
+     *
+     * @var bool
+     */
+    public $exists = false;
+    /**
+     * Indicates if the model was inserted during the current request lifecycle.
+     *
+     * @var bool
+     */
+    public $wasRecentlyCreated = false;
+    /**
      * The connection name for the model.
      *
      * @var string
@@ -48,18 +60,29 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     protected $connection;
 
     /**
-     * Indicates if the model exists.
+     * Handle dynamic method calls into the model.
      *
-     * @var bool
+     * @param  string  $method
+     * @param  array  $parameters
+     *
+     * @return mixed
      */
-    public $exists = false;
+    public function __call($method, $parameters)
+    {
+        if (method_exists($this, $method)) {
+            return $this->$method(...$parameters);
+        }
+    }
 
     /**
-     * Indicates if the model was inserted during the current request lifecycle.
+     * Convert the model to its string representation.
      *
-     * @var bool
+     * @return string
      */
-    public $wasRecentlyCreated = false;
+    public function __toString()
+    {
+        return $this->toJson();
+    }
 
     /**
      * Get the default database connection for the site. We are likely not connecting to different types database servers.
@@ -97,18 +120,13 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     }
 
     /**
-     * Handle dynamic method calls into the model.
+     * Convert the object into something JSON serializable.
      *
-     * @param  string  $method
-     * @param  array  $parameters
-     *
-     * @return mixed
+     * @return array
      */
-    public function __call($method, $parameters)
+    public function jsonSerialize()
     {
-        if (method_exists($this, $method)) {
-            return $this->$method(...$parameters);
-        }
+        return $this->toArray();
     }
 
     /**
@@ -182,13 +200,13 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
     }
 
     /**
-     * Convert the model to its string representation.
+     * Get the instance as an array.
      *
-     * @return string
+     * @return array
      */
-    public function __toString()
+    public function toArray()
     {
-        return $this->toJson();
+        return array_merge($this->attributesToArray(), $this->relationsToArray());
     }
 
     /**
@@ -209,26 +227,6 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
         }
 
         return $json;
-    }
-
-    /**
-     * Convert the object into something JSON serializable.
-     *
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        return $this->toArray();
-    }
-
-    /**
-     * Get the instance as an array.
-     *
-     * @return array
-     */
-    public function toArray()
-    {
-        return array_merge($this->attributesToArray(), $this->relationsToArray());
     }
 
     /**
