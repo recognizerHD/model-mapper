@@ -1,5 +1,9 @@
 # Changelog
 
+## 2023-03-24: v1.4.8
+#### Changed
+- Bug: dates within arrays were not considering if they were utc or not.
+
 ## 2023-03-24: v1.4.7
 #### Changed
 - Updated PHP Version

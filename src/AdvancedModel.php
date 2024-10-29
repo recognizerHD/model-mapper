@@ -16,21 +16,23 @@ class AdvancedModel extends Model
     // TODO handle UTC and local dates with this.
     protected $utcDates = [
         self::UPDATED_AT,
-        self::CREATED_AT
+        self::CREATED_AT,
     ];
 
     protected $utcAsLocal = true;
 
     /**
-     * @param array $fillable
+     * @param  array  $fillable
      */
     public function addFillable(array $fillable)
     {
         $this->fillable = array_merge($fillable, $this->fillable);
     }
 
+//attributes start
+
     /**
-     * @param string $key
+     * @param  string  $key
      *
      * @return mixed
      */
@@ -44,4 +46,5 @@ class AdvancedModel extends Model
         // One last check on the parent value.
         return $this->getParentValue($key);
     }
+//attributes end
 }

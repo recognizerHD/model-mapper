@@ -2,6 +2,8 @@
 
 namespace MinionFactory\ModelMapper;
 
+use Illuminate\Database\Connection;
+use Illuminate\Support\Collection;
 use MinionFactory\ModelMapper\Contracts\ModelAttributeMapping;
 
 /**
@@ -15,39 +17,16 @@ class AdvancedResult extends RawResult
     /**
      * The connection object used by one of the models.
      *
-     * @var \Illuminate\Database\Connection
+     * @var Connection
      */
     protected $connectionObject;
 
     /**
-     * Set the connection associated with the model.
-     *
-     * @param  \Illuminate\Database\Connection $connection
-     * @return $this
-     */
-    public function setConnectionObject($connection)
-    {
-        $this->connectionObject = $connection;
-
-        return $this;
-    }
-
-    /**
-     * Get the database connection for the model.
-     *
-     * @return \Illuminate\Database\Connection
-     */
-    public function getConnection()
-    {
-        return $this->connectionObject;
-    }
-
-    /**
      * @param $records
-     * @param array $mapping
-     * @param bool $single
+     * @param  array  $mapping
+     * @param  bool  $single
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public static function make(&$records, $mapping = [], $single = false)
     {
@@ -56,7 +35,7 @@ class AdvancedResult extends RawResult
                 return null;
             }
             $newRecord = $records[0];
-            $records   = self::makeSingle($newRecord, $mapping);
+            $records = self::makeSingle($newRecord, $mapping);
 
             return $records;
         }
@@ -66,7 +45,7 @@ class AdvancedResult extends RawResult
         }
 
         foreach ($records as $ix => $record) {
-            $newRecord    = self::makeSingle($record, $mapping);
+            $newRecord = self::makeSingle($record, $mapping);
             $records[$ix] = $newRecord;
         }
 
@@ -75,11 +54,35 @@ class AdvancedResult extends RawResult
         return $records;
     }
 
+    /**
+     * Get the database connection for the model.
+     *
+     * @return Connection
+     */
+    public function getConnection()
+    {
+        return $this->connectionObject;
+    }
+
+    /**
+     * Set the connection associated with the model.
+     *
+     * @param  Connection  $connection
+     *
+     * @return $this
+     */
+    public function setConnectionObject($connection)
+    {
+        $this->connectionObject = $connection;
+
+        return $this;
+    }
+
     private static function makeSingle($record, $mapping = [])
     {
-        $newRecord             = new self();
-        $newRecord->attributes = (array)$record;
-        $newRecord->original   = (array)$record;
+        $newRecord = new self();
+        $newRecord->attributes = (array) $record;
+        $newRecord->original = (array) $record;
 
         if (sizeof($mapping)) {
             $newRecord->modelMapper($mapping);
