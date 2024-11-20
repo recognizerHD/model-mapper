@@ -1,5 +1,10 @@
 # Changelog
 
+## 2024-11-20: v1.4.9
+#### Changed
+- Last update for the laravel 9 branch. 
+- Vendor file updates.
+
 ## 2023-03-24: v1.4.8
 #### Changed
 - Bug: dates within arrays were not considering if they were utc or not.
