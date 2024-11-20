@@ -9,18 +9,10 @@ complex joins with equally complex where clauses. Using true eloquent objects fo
 beneficial. Maintenance and readability suffer, when compared to the raw equivalent SQL query that would 
 be used. 
 
-Other times where the join is simple enough, I the attribute methods are missing except for the main class
+Other times where the join is simple enough, the attribute methods are missing except for the main class
 that is being instantiated. 
 
-Finally, as I do most of my work with sqlsrv (Microsoft SQL Server), it has issues with dates.
-
 This package is meant for my own usage, but is free for others who find it useful.
-
-#### ~~Dates and SQLSRV (Microsoft SQL Server)~~
-~~When the attribute is listed as a date attribute, it will use the internal fromDateTime method. This causes a
-problem when the field is coming from sqlsrv. This overriding method strips the trailing milliseconds from the
-date field so it doesn't cause errors. This will need review on subsequent updates of the laravel core incase 
-they fixed this issue.~~
 
 #### Model Mapping: AdvancedModel
 Using the model for simple updates / inserts etc is great. When the queries involve multiple joins with multiple 

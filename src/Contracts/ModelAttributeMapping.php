@@ -113,12 +113,91 @@ trait ModelAttributeMapping
         return $this->setAttribute($key, $value);
     }
 
+    public function setParentObject(&$parent)
+    {
+        $this->parentObject = $parent;
+    }
+
+    private function getParentValue($key)
+    {
+        if (isset($this->parentObject) && $this->parentObject && ! key_exists($key, $this->attributes)) {
+            return $this->parentObject->$key;
+        }
+
+        return parent::getAttribute($key);
+    }
+
+    public function setRawAttribute($key, $value)
+    {
+        $this->attributes[$key] = $value;
+    }
+
+    /**
+     * Set a given attribute on the model.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     *
+     * @return mixed
+     * @deprecated This will be removed in a future version. This package will no longer handle UTC dates.
+     * TODO IMPORTANT Remove this in a future version.
+     */
+    public function setAttribute($key, $value)
+    {
+        // First we will check for the presence of a mutator for the set operation
+        // which simply lets the developers tweak the attribute as it is set on
+        // this model, such as "json_encoding" a listing of data for storage.
+        if ($this->hasSetMutator($key)) {
+            return $this->setMutatedAttributeValue($key, $value);
+        } elseif ($this->hasAttributeSetMutator($key)) {
+            return $this->setAttributeMarkedMutatedAttributeValue($key, $value);
+        }
+
+        // If an attribute is listed as a "date", we'll convert it from a DateTime
+        // instance into a form proper for storage on the database tables using
+        // the connection grammar's date format. We will auto set the values.
+        elseif ($value && $this->isUtcDateAttribute($key)) {
+            $value = $this->fromUtcDateTime($value);
+        }
+
+        return parent::setAttribute($key, $value);
+    }
+
+    /**
+     * Determine if the given attribute is a date or date castable.
+     *
+     * @param  string  $key
+     *
+     * @return bool
+     * @deprecated This will be removed in a future version. This package will no longer handle UTC dates.
+     *  TODO IMPORTANT Remove this in a future version.
+     */
+    protected function isUtcDateAttribute($key)
+    {
+        return in_array($key, $this->getUtcDates(), true);
+//        ||               $this->isDateCastable($key); // This broke some utc dates
+    }
+
+    /**
+     * Get the attributes that should be converted to dates.
+     *
+     * @return array
+     * @deprecated This will be removed in a future version. This package will no longer handle UTC dates.
+     *  TODO IMPORTANT Remove this in a future version.
+     */
+    public function getUtcDates()
+    {
+        return $this->utcDates ?? [];
+    }
+
     /**
      * Convert a DateTime to a storable string.
      *
      * @param  mixed  $value
      *
      * @return string|null
+     * @deprecated This will be removed in a future version. This package will no longer handle UTC dates.
+     *  TODO IMPORTANT Remove this in a future version.
      */
     public function fromUtcDateTime($value)
     {
@@ -128,109 +207,13 @@ trait ModelAttributeMapping
     }
 
     /**
-     * Get the attributes that should be converted to dates.
-     *
-     * @return array
-     */
-    public function getDates()
-    {
-        $defaults = [
-            $this->getCreatedAtColumn(),
-            $this->getUpdatedAtColumn(),
-        ];
-
-        return $this->usesTimestamps()
-            ? array_unique(array_merge($this->dates, $this->utcDates ?? [], $defaults))
-            : array_unique(array_merge($this->dates, $this->utcDates ?? []));
-    }
-
-    /**
-     * Get the attributes that should be converted to dates.
-     *
-     * @return array
-     */
-    public function getUtcDates()
-    {
-        return $this->utcDates ?? [];
-    }
-
-    /**
-     * @param  array  $array
-     */
-    public function modelMapper($array)
-    {
-        $actualMapping = [];
-        foreach ($array as $field => $class) {
-            switch (strtolower($class)) {
-                case "integer":
-                case "int":
-                    $this->setRawAttribute($field, intval($this->getAttributeValue($field)));
-                    break;
-                case "boolean":
-                case "bool":
-                    $this->setRawAttribute($field, boolval($this->getAttributeValue($field)));
-                    break;
-                case "float":
-                    $this->setRawAttribute($field, floatval($this->getAttributeValue($field)));
-                    break;
-                case "double":
-                    $this->setRawAttribute($field, doubleval($this->getAttributeValue($field)));
-                    break;
-                case "string":
-                case "text":
-                    $this->setRawAttribute($field, strval($this->getAttributeValue($field)));
-                    break;
-                default:
-                    if ( ! isset($this->modelIndex[$class])) {
-                        $this->modelIndex[$class] = [];
-                    }
-                    $this->modelIndex[$class][] = $field;
-                    $actualMapping[$field] = $class;
-            }
-        }
-        $this->modelAttributeMapping = $actualMapping;
-    }
-
-    public function setParentObject(&$parent)
-    {
-        $this->parentObject = $parent;
-    }
-
-    /**
-     * Add the date attributes to the attributes array.
-     *
-     * @param  array  $attributes
-     *
-     * @return array
-     */
-    protected function addDateAttributesToArray(array $attributes)
-    {
-        foreach ($this->getDates() as $key) {
-            if ( ! isset($attributes[$key])) {
-                continue;
-            }
-
-            if ($attributes[$key] !== null
-                && \in_array($key, $this->getUtcDates(), false)) {
-                $attributes[$key] = $this->serializeDate(
-                    $this->asUtcDateTime($attributes[$key], ($this->utcAsLocal ?? true) ? date_default_timezone_get() : 'UTC')
-                );
-            } else {
-                $attributes[$key] = $this->serializeDate(
-                    $this->asDateTime($attributes[$key])
-                );
-            }
-        }
-
-        return $attributes;
-    }
-
-    /**
      * Return a timestamp as DateTime object.
      *
      * @param  mixed  $value
      *
      * @return Carbon
+     * @deprecated This will be removed in a future version. This package will no longer handle UTC dates.
+     *  TODO IMPORTANT Remove this in a future version.
      */
     protected function asUtcDateTime($value, $returnTimezone = 'UTC')
     {
@@ -277,6 +260,76 @@ trait ModelAttributeMapping
         return Date::parse($value, new DateTimeZone('UTC'))->setTimezone($returnTimezone);
     }
 
+//attributes start
+
+    /**
+     * @param  array  $array
+     */
+    public function modelMapper($array)
+    {
+        $actualMapping = [];
+        foreach ($array as $field => $class) {
+            switch (strtolower($class)) {
+                case "integer":
+                case "int":
+                    $this->setRawAttribute($field, intval($this->getAttributeValue($field)));
+                    break;
+                case "boolean":
+                case "bool":
+                    $this->setRawAttribute($field, boolval($this->getAttributeValue($field)));
+                    break;
+                case "float":
+                    $this->setRawAttribute($field, floatval($this->getAttributeValue($field)));
+                    break;
+                case "double":
+                    $this->setRawAttribute($field, doubleval($this->getAttributeValue($field)));
+                    break;
+                case "string":
+                case "text":
+                    $this->setRawAttribute($field, strval($this->getAttributeValue($field)));
+                    break;
+                default:
+                    if ( ! isset($this->modelIndex[$class])) {
+                        $this->modelIndex[$class] = [];
+                    }
+                    $this->modelIndex[$class][] = $field;
+                    $actualMapping[$field] = $class;
+            }
+        }
+        $this->modelAttributeMapping = $actualMapping;
+    }
+
+    /**
+     * Add the date attributes to the attributes array.
+     *
+     * @param  array  $attributes
+     *
+     * @return array
+     * @deprecated This will be removed in a future version. This package will no longer handle UTC dates.
+     *   TODO IMPORTANT Remove this in a future version.
+     */
+    protected function addDateAttributesToArray(array $attributes)
+    {
+        foreach ($this->getDates() as $key) {
+            if ( ! isset($attributes[$key])) {
+                continue;
+            }
+
+            if ($attributes[$key] !== null
+                && \in_array($key, $this->getUtcDates(), false)) {
+                $attributes[$key] = $this->serializeDate(
+                    $this->asUtcDateTime($attributes[$key], ($this->utcAsLocal ?? true) ? date_default_timezone_get() : 'UTC')
+                );
+            } else {
+                $attributes[$key] = $this->serializeDate(
+                    $this->asDateTime($attributes[$key])
+                );
+            }
+        }
+
+        return $attributes;
+    }
+
     /**
      * Transform a raw model value using mutators, casts, etc.
      *
@@ -284,6 +337,8 @@ trait ModelAttributeMapping
      * @param  mixed  $value
      *
      * @return mixed
+     * @deprecated This will be removed in a future version. This package will no longer handle UTC dates.
+     *    TODO IMPORTANT Remove this in a future version.
      */
     protected function transformModelValue($key, $value)
     {
@@ -292,8 +347,11 @@ trait ModelAttributeMapping
         // retrieval from the model to a form that is more useful for usage.
         if ($this->hasGetMutator($key)) {
             return $this->mutateAttribute($key, $value);
+        } elseif ($this->hasAttributeGetMutator($key)) {
+            return $this->mutateAttributeMarkedAttribute($key, $value);
         }
 
+        // TODO IMPORTANT How am I checking if the attribute is aUTC
         // If the attribute is listed as a date, we will convert it to a DateTime
         // instance on retrieval, which makes it quite convenient to work with
         // date fields without having to create a mutator for each property.
@@ -307,6 +365,13 @@ trait ModelAttributeMapping
         // an appropriate native PHP type dependent upon the associated value
         // given with the key in the pair. Dayle made this comment line up.
         if ($this->hasCast($key)) {
+            if (static::preventsAccessingMissingAttributes() &&
+                ! array_key_exists($key, $this->attributes) &&
+                ($this->isEnumCastable($key) ||
+                 in_array($this->getCastType($key), static::$primitiveCastTypes))) {
+                $this->throwMissingAttributeExceptionIfApplicable($key);
+            }
+
             return $this->castAttribute($key, $value);
         }
 
@@ -319,61 +384,6 @@ trait ModelAttributeMapping
         }
 
         return $value;
-    }
-
-    private function getParentValue($key)
-    {
-        if (isset($this->parentObject) && $this->parentObject && ! key_exists($key, $this->attributes)) {
-            return $this->parentObject->$key;
-        }
-
-        return parent::getAttribute($key);
-    }
-
-//attributes start
-    /**
-     * Determine if the given attribute is a date or date castable.
-     *
-     * @param  string  $key
-     *
-     * @return bool
-     */
-    protected function isUtcDateAttribute($key)
-    {
-        return in_array($key, $this->getUtcDates(), true);
-//        ||               $this->isDateCastable($key); // This broke some utc dates
-    }
-
-    /**
-     * Set a given attribute on the model.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     *
-     * @return mixed
-     */
-    public function setAttribute($key, $value)
-    {
-        // First we will check for the presence of a mutator for the set operation
-        // which simply lets the developers tweak the attribute as it is set on
-        // the model, such as "json_encoding" an listing of data for storage.
-        if ($this->hasSetMutator($key)) {
-            return $this->setMutatedAttributeValue($key, $value);
-        }
-
-        // If an attribute is listed as a "date", we'll convert it from a DateTime
-        // instance into a form proper for storage on the database tables using
-        // the connection grammar's date format. We will auto set the values.
-        elseif ($value && $this->isUtcDateAttribute($key)) {
-            $value = $this->fromUtcDateTime($value);
-        }
-
-        return parent::setAttribute($key, $value);
-    }
-
-    public function setRawAttribute($key, $value)
-    {
-        $this->attributes[$key] = $value;
     }
 //attributes end
 }
