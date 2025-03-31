@@ -2,11 +2,6 @@
 
 namespace MinionFactory\ModelMapper\Contracts;
 
-use Carbon\CarbonInterface;
-use DateTimeInterface;
-use DateTimeZone;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Date;
 use MinionFactory\ModelMapper\AdvancedResult;
 
 trait ModelAttributeMapping
@@ -133,136 +128,6 @@ trait ModelAttributeMapping
     }
 
     /**
-     * Set a given attribute on the model.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     *
-     * @return mixed
-     * @deprecated This will be removed in a future version. This package will no longer handle UTC dates.
-     * TODO IMPORTANT Remove this in a future version.
-     */
-    public function setAttribute($key, $value)
-    {
-        // First we will check for the presence of a mutator for the set operation
-        // which simply lets the developers tweak the attribute as it is set on
-        // this model, such as "json_encoding" a listing of data for storage.
-        if ($this->hasSetMutator($key)) {
-            return $this->setMutatedAttributeValue($key, $value);
-        } elseif ($this->hasAttributeSetMutator($key)) {
-            return $this->setAttributeMarkedMutatedAttributeValue($key, $value);
-        }
-
-        // If an attribute is listed as a "date", we'll convert it from a DateTime
-        // instance into a form proper for storage on the database tables using
-        // the connection grammar's date format. We will auto set the values.
-        elseif ($value && $this->isUtcDateAttribute($key)) {
-            $value = $this->fromUtcDateTime($value);
-        }
-
-        return parent::setAttribute($key, $value);
-    }
-
-    /**
-     * Determine if the given attribute is a date or date castable.
-     *
-     * @param  string  $key
-     *
-     * @return bool
-     * @deprecated This will be removed in a future version. This package will no longer handle UTC dates.
-     *  TODO IMPORTANT Remove this in a future version.
-     */
-    protected function isUtcDateAttribute($key)
-    {
-        return in_array($key, $this->getUtcDates(), true);
-//        ||               $this->isDateCastable($key); // This broke some utc dates
-    }
-
-    /**
-     * Get the attributes that should be converted to dates.
-     *
-     * @return array
-     * @deprecated This will be removed in a future version. This package will no longer handle UTC dates.
-     *  TODO IMPORTANT Remove this in a future version.
-     */
-    public function getUtcDates()
-    {
-        return $this->utcDates ?? [];
-    }
-
-    /**
-     * Convert a DateTime to a storable string.
-     *
-     * @param  mixed  $value
-     *
-     * @return string|null
-     * @deprecated This will be removed in a future version. This package will no longer handle UTC dates.
-     *  TODO IMPORTANT Remove this in a future version.
-     */
-    public function fromUtcDateTime($value)
-    {
-        return empty($value) ? $value : $this->asUtcDateTime($value)->format(
-            $this->getDateFormat()
-        );
-    }
-
-    /**
-     * Return a timestamp as DateTime object.
-     *
-     * @param  mixed  $value
-     *
-     * @return Carbon
-     * @deprecated This will be removed in a future version. This package will no longer handle UTC dates.
-     *  TODO IMPORTANT Remove this in a future version.
-     */
-    protected function asUtcDateTime($value, $returnTimezone = 'UTC')
-    {
-//        $returnTimezone = ($this->utcAsLocal ?? true) ? date_default_timezone_get() : 'UTC';
-        // If this value is already a Carbon instance, we shall just return it as is.
-        // This prevents us having to re-instantiate a Carbon instance when we know
-        // it already is one, which wouldn't be fulfilled by the DateTime check.
-        if ($value instanceof CarbonInterface) {
-            return Date::instance($value)->setTimezone($returnTimezone);
-        }
-
-        // If the value is already a DateTime instance, we will just skip the rest of
-        // these checks since they will be a waste of time, and hinder performance
-        // when checking the field. We will just return the DateTime right away.
-        if ($value instanceof DateTimeInterface) {
-            return Date::parse(
-                $value->format('Y-m-d H:i:s.u'), $value->getTimezone()
-            )->setTimezone($returnTimezone);
-        }
-
-        // If this value is an integer, we will assume it is a UNIX timestamp's value
-        // and format a Carbon object from this timestamp. This allows flexibility
-        // when defining your date fields as they might be UNIX timestamps here.
-        if (is_numeric($value)) {
-            return Date::createFromTimestamp($value)->setTimezone($returnTimezone);
-        }
-
-        // If the value is in simply year, month, day format, we will instantiate the
-        // Carbon instances from that format. Again, this provides for simple date
-        // fields on the database, while still supporting Carbonized conversion.
-        if ($this->isStandardDateFormat($value)) {
-            return Date::instance(Carbon::createFromFormat('Y-m-d', $value, new DateTimeZone('UTC'))->startOfDay())->setTimezone($returnTimezone);
-        }
-
-        $format = $this->getDateFormat();
-
-        // Finally, we will just assume this date is in the format used by default on
-        // the database connection and use that format to create the Carbon object
-        // that is returned back out to the developers after we convert it here.
-        if (Date::hasFormat($value, $format)) {
-            return Date::createFromFormat($format, $value, new DateTimeZone('UTC'))->setTimezone($returnTimezone);
-        }
-
-        return Date::parse($value, new DateTimeZone('UTC'))->setTimezone($returnTimezone);
-    }
-
-//attributes start
-
-    /**
      * @param  array  $array
      */
     public function modelMapper($array)
@@ -299,91 +164,25 @@ trait ModelAttributeMapping
         $this->modelAttributeMapping = $actualMapping;
     }
 
-    /**
-     * Add the date attributes to the attributes array.
-     *
-     * @param  array  $attributes
-     *
-     * @return array
-     * @deprecated This will be removed in a future version. This package will no longer handle UTC dates.
-     *   TODO IMPORTANT Remove this in a future version.
-     */
-    protected function addDateAttributesToArray(array $attributes)
+    public function setParentObject(&$parent)
     {
-        foreach ($this->getDates() as $key) {
-            if ( ! isset($attributes[$key])) {
-                continue;
-            }
-
-            if ($attributes[$key] !== null
-                && \in_array($key, $this->getUtcDates(), false)) {
-                $attributes[$key] = $this->serializeDate(
-                    $this->asUtcDateTime($attributes[$key], ($this->utcAsLocal ?? true) ? date_default_timezone_get() : 'UTC')
-                );
-            } else {
-                $attributes[$key] = $this->serializeDate(
-                    $this->asDateTime($attributes[$key])
-                );
-            }
-        }
-
-        return $attributes;
+        $this->parentObject = $parent;
     }
 
-    /**
-     * Transform a raw model value using mutators, casts, etc.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     *
-     * @return mixed
-     * @deprecated This will be removed in a future version. This package will no longer handle UTC dates.
-     *    TODO IMPORTANT Remove this in a future version.
-     */
-    protected function transformModelValue($key, $value)
+    private function getParentValue($key)
     {
-        // If the attribute has a get mutator, we will call that then return what
-        // it returns as the value, which is useful for transforming values on
-        // retrieval from the model to a form that is more useful for usage.
-        if ($this->hasGetMutator($key)) {
-            return $this->mutateAttribute($key, $value);
-        } elseif ($this->hasAttributeGetMutator($key)) {
-            return $this->mutateAttributeMarkedAttribute($key, $value);
+        if (isset($this->parentObject) && $this->parentObject && ! key_exists($key, $this->attributes)) {
+            return $this->parentObject->$key;
         }
 
-        // TODO IMPORTANT How am I checking if the attribute is aUTC
-        // If the attribute is listed as a date, we will convert it to a DateTime
-        // instance on retrieval, which makes it quite convenient to work with
-        // date fields without having to create a mutator for each property.
-        if ($value !== null
-            && \in_array($key, $this->getUtcDates(), false)) {
-            return $this->asUtcDateTime($value, ($this->utcAsLocal ?? true) ? date_default_timezone_get() : 'UTC');
-        }
-        // Casting caused issues with utc dates.
-
-        // If the attribute exists within the cast array, we will convert it to
-        // an appropriate native PHP type dependent upon the associated value
-        // given with the key in the pair. Dayle made this comment line up.
-        if ($this->hasCast($key)) {
-            if (static::preventsAccessingMissingAttributes() &&
-                ! array_key_exists($key, $this->attributes) &&
-                ($this->isEnumCastable($key) ||
-                 in_array($this->getCastType($key), static::$primitiveCastTypes))) {
-                $this->throwMissingAttributeExceptionIfApplicable($key);
-            }
-
-            return $this->castAttribute($key, $value);
-        }
-
-        // If the attribute is listed as a date, we will convert it to a DateTime
-        // instance on retrieval, which makes it quite convenient to work with
-        // date fields without having to create a mutator for each property.
-        if ($value !== null
-            && \in_array($key, $this->getDates(), false)) {
-            return $this->asDateTime($value);
-        }
-
-        return $value;
+        return parent::getAttribute($key);
     }
+
+//attributes start
+    public function setRawAttribute($key, $value)
+    {
+        $this->attributes[$key] = $value;
+    }
+//attributes end
 //attributes end
 }

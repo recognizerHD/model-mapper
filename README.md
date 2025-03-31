@@ -12,6 +12,8 @@ be used.
 Other times where the join is simple enough, the attribute methods are missing except for the main class
 that is being instantiated. 
 
+~~Finally, as I do most of my work with sqlsrv (Microsoft SQL Server), it has issues with dates.~~
+
 This package is meant for my own usage, but is free for others who find it useful.
 
 #### Model Mapping: AdvancedModel

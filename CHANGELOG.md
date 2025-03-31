@@ -1,8 +1,10 @@
 # Changelog
 
-## 2024-11-20: v2.0.0
-- The start of a new line supporting laravel version 10.
-- Dates are handled with casting now in laravel 10. I'm removing support for utc dates from this package and let  use other packages handle the casting of dates for other timezones. This will simplify the usage of this package to be purely for attribute mapping to other models.
+## 2024-11-20: v1.5.0
+#### Changed
+- Updated for Laravel 10. Removed getDate functions and fixed array issues.
+- Vendor file updates.
+- Dates are handled with casting now in laravel 10. I'm removing support for utc dates from this package and let use other packages handle the casting of dates for other timezones. This will simplify the usage of this package to be purely for attribute mapping to other models.
 
 ## 2024-11-20: v1.4.9
 #### Changed
