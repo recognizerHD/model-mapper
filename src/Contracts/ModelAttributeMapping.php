@@ -108,25 +108,6 @@ trait ModelAttributeMapping
         return $this->setAttribute($key, $value);
     }
 
-    public function setParentObject(&$parent)
-    {
-        $this->parentObject = $parent;
-    }
-
-    private function getParentValue($key)
-    {
-        if (isset($this->parentObject) && $this->parentObject && ! key_exists($key, $this->attributes)) {
-            return $this->parentObject->$key;
-        }
-
-        return parent::getAttribute($key);
-    }
-
-    public function setRawAttribute($key, $value)
-    {
-        $this->attributes[$key] = $value;
-    }
-
     /**
      * @param  array  $array
      */
@@ -183,6 +164,5 @@ trait ModelAttributeMapping
     {
         $this->attributes[$key] = $value;
     }
-//attributes end
 //attributes end
 }
