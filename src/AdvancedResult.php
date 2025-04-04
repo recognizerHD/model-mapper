@@ -17,18 +17,18 @@ class AdvancedResult extends RawResult
     /**
      * The connection object used by one of the models.
      *
-     * @var Connection
+     * @var Connection|null
      */
-    protected $connectionObject;
+    protected ?Connection $connectionObject = null;
 
     /**
      * @param $records
-     * @param  array  $mapping
+     * @param  array|null  $mapping
      * @param  bool  $single
      *
-     * @return Collection
+     * @return AdvancedResult|Collection|null
      */
-    public static function make(&$records, $mapping = [], $single = false)
+    public static function make(&$records, ?array $mapping = [], ?bool $single = false): self|Collection|null
     {
         if ($single) {
             if ( ! $records || ! is_array($records) || ! count($records)) {
@@ -59,7 +59,7 @@ class AdvancedResult extends RawResult
      *
      * @return Connection
      */
-    public function getConnection()
+    public function getConnection(): Connection
     {
         return $this->connectionObject;
     }
@@ -71,14 +71,14 @@ class AdvancedResult extends RawResult
      *
      * @return $this
      */
-    public function setConnectionObject($connection)
+    public function setConnectionObject(Connection $connection): static
     {
         $this->connectionObject = $connection;
 
         return $this;
     }
 
-    private static function makeSingle($record, $mapping = [])
+    private static function makeSingle($record, $mapping = []): self
     {
         $newRecord = new self();
         $newRecord->attributes = (array) $record;
