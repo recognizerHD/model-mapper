@@ -13,14 +13,6 @@ class AdvancedModel extends Model
 {
     use ModelAttributeMapping;
 
-    // TODO handle UTC and local dates with this.
-    protected $utcDates = [
-        self::UPDATED_AT,
-        self::CREATED_AT,
-    ];
-
-    protected $utcAsLocal = true;
-
     /**
      * @param  array  $fillable
      */
