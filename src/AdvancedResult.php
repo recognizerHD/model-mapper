@@ -57,9 +57,9 @@ class AdvancedResult extends RawResult
     /**
      * Get the database connection for the model.
      *
-     * @return Connection
+     * @return ?Connection
      */
-    public function getConnection(): Connection
+    public function getConnection(): ?Connection
     {
         return $this->connectionObject;
     }
