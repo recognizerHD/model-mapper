@@ -1,6 +1,10 @@
 # Changelog
 
-## 2024-11-20: v1.5.0
+## 2025-04-23: v1.5.1
+#### Fixed
+- Bug: getConnection returning null throws an error
+
+## 2025-04-08: v1.5.0
 #### Changed
 - Updated for Laravel 10. Removed getDate functions and fixed array issues.
 - Vendor file updates.
