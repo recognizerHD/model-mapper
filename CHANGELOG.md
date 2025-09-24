@@ -1,5 +1,10 @@
 # Changelog
 
+## 2025-04-23: v1.5.2
+#### Changed
+- Last update for the laravel 10-12 branches.
+- Vendor file updates.
+
 ## 2025-04-23: v1.5.1
 #### Fixed
 - Bug: getConnection returning null throws an error
