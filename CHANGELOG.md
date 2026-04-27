@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-04-27: v1.5.3
+#### Changed
+- Vendor file updates.
+
 ## 2025-04-23: v1.5.2
 #### Changed
 - Last update for the laravel 10-12 branches.

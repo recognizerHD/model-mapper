@@ -124,7 +124,7 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      *
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }
@@ -143,7 +143,7 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      * The return value will be casted to boolean if non-boolean was returned.
      * @since 5.0.0
      */
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return ! is_null($this->getAttribute($offset));
     }
@@ -159,7 +159,7 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      * @return mixed Can return all value types.
      * @since 5.0.0
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->getAttribute($offset);
     }
@@ -178,7 +178,7 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      * @return void
      * @since 5.0.0
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->setAttribute($offset, $value);
     }
@@ -194,7 +194,7 @@ class RawResult implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
      * @return void
      * @since 5.0.0
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->attributes[$offset], $this->relations[$offset]);
     }
