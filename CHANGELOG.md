@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-13: v1.5.4
+#### Changed
+- Vendor file updates.
+
 ## 2026-04-27: v1.5.3
 #### Changed
 - Vendor file updates.
